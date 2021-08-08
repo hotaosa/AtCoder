@@ -50,11 +50,11 @@ int main() {
       int next = db[i][cur];
       if (t[next] < z) cur = next;
     }
-    it = std::lower_bound(vp[b[cur]].begin(), vp[b[cur]].end(), std::make_pair(t[cur], 0));
-    if (it == vp[b[cur]].end()) { std::cout << b[cur] + 1 << std::endl; continue; }
-    int next = it->second;
-    if (z < s[next]) { std::cout << b[cur] + 1 << std::endl; continue; }
-    std::cout << a[next] + 1 << " " << b[next] + 1 << std::endl;
+
+    int next = db[0][cur];
+    if (s[next] > z) std::cout << b[cur] + 1 << std::endl;
+    else if (t[next] > z) std::cout << a[next] + 1 << " " << b[next] + 1 << std::endl;
+    else std::cout << b[next] + 1 << std::endl;
   }
   return 0;
 }
