@@ -4,17 +4,17 @@
 int main() {
   int n;
   std::cin >> n;
-  std::vector<long long> s(n), t(n);
+  std::vector<long long> s(n), t(2 * n);
   for (int i = 0; i < n; ++i) std::cin >> s[i];
-  for (int i = 0; i < n; ++i) std::cin >> t[i];
-
-  for (int i = 0; i < 2; ++i) {
-    t[0] = std::min(t[0], t[n - 1] + s[n - 1]);
-    for (int j = 1; j < n; ++j) {
-      t[j] = std::min(t[j], t[j - 1] + s[j - 1]);
-    }
+  for (int i = 0; i < n; ++i) {
+    std::cin >> t[i];
+    t[n + i] = t[i];
   }
 
-  for (int res : t) std::cout << res << std::endl;
+  for (int i = 0; i < 2 * n - 1; ++i) {
+    t[i + 1] = std::min(t[i + 1], t[i] + s[i % n]);
+  }
+
+  for (int i = n; i < 2 * n; ++i) std::cout << t[i] << std::endl;
   return 0;
 }
