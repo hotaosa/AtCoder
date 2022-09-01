@@ -3,56 +3,42 @@
 
 using namespace std;
 
-struct Point {
-  double x, y;
-  Point(double x_, double y_) : x(x_), y(y_) { }
-};
-
-template<class T> inline bool chmax(T &a, T b) {
-  if (a < b) { a = b; return true; }
-  return false;
-}
-
-double CalcAngle(Point a, Point b) {
-  double ret = atan2(b.y - a.y, b.x - a.x);
-  ret = (ret / M_PI + 1.0) * 180;
-  return ret;
-}
-
-double CalcDiff(double a, double b) {
-  double ret = abs(a - b);
-  ret = min(ret, 360.0 - ret);
-  return ret;
-}
-
 int main() {
   int n;
   cin >> n;
-  vector<Point> vp;
-  for (int i = 0; i < n; ++i) {
-    double x, y;
-    cin >> x >> y;
-    vp.emplace_back(x, y);
-  }
+  vector<int> x(n), y(n);
+  for (int i = 0; i < n; ++i) cin >> x[i] >> y[i];
+
+  auto angle = [&](int id) -> double {
+    double ret = 0.0;
+    vector<double> v;
+    for (int i = 0; i < n; ++i) {
+      if (i == id) continue;
+      double dx = x[i] - x[id];
+      double dy = y[i] - y[id];
+      v.push_back(atan2(dy, dx) + M_PI);
+    }
+    sort(v.begin(), v.end());
+    for (int i = 0; i < n - 1; ++i) {
+      double target = v[i] + M_PI;
+      if (target >= 2.0 * M_PI) target -= 2.0 * M_PI;
+      auto p = lower_bound(v.begin(), v.end(), target);
+      if (p != v.end()) {
+        ret = max(ret, min(fabs(*p - v[i]), 2 * M_PI - fabs(*p - v[i])));
+      }
+      if (p != v.begin()) {
+        --p;
+        ret = max(ret, min(fabs(*p - v[i]), 2 * M_PI - fabs(*p - v[i])));
+      }
+    }
+    return ret / M_PI * 180.0;
+  };
 
   double res = 0.0;
   for (int i = 0; i < n; ++i) {
-    std::vector<double> rad;
-    for (int j = 0; j < n; ++j) {
-      if (j == i) continue;
-      rad.push_back(CalcAngle(vp[i], vp[j]));
-    }
-    sort(rad.begin(), rad.end());
-    for (double r : rad) {
-      double target = r + 180.0;
-      if (target > 360.0) target -= 360.0;
-      auto p = lower_bound(rad.begin(), rad.end(), target);
-      if (p == rad.end()) chmax(res, CalcDiff(r, rad[0]));
-      else chmax(res, CalcDiff(r, *p));
-      if (p == rad.begin()) chmax(res, CalcDiff(r, rad.back()));
-      else chmax(res, CalcDiff(r, *(--p)));
-    }
+    res = max(res, angle(i));
   }
   printf("%.10f\n", res);
+  
   return 0;
 }

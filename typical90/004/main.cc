@@ -8,18 +8,18 @@ int main() {
   cin >> h >> w;
 
   vector<vector<int> > a(h, vector<int>(w));
-  vector<int> row_sum(h, 0), column_sum(w, 0);
+  vector<int> sum_r(h, 0), sum_c(w, 0);
   for (int i = 0; i < h; ++i) {
     for (int j = 0; j < w; ++j) {
       cin >> a[i][j];
-      row_sum[i] += a[i][j];
-      column_sum[j] += a[i][j];
+      sum_r[i] += a[i][j];
+      sum_c[j] += a[i][j];
     }
   }
 
   for (int i = 0; i < h; ++i) {
     for (int j = 0; j < w; ++j) {
-      cout << row_sum[i] + column_sum[j] - a[i][j] << " ";
+      cout << sum_r[i] + sum_c[j] - a[i][j] << " ";
     }
     cout << endl;
   }  

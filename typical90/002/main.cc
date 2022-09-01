@@ -3,20 +3,21 @@
 
 using namespace std;
 
-void func(string cur, int sum, const int len, set<string> &res) {
-  if ((int)cur.length() == len) {
-    if (sum == 0) res.insert(cur);
+void dfs(int n, string s, int sum, char nx) {
+  if (sum == 0 && nx == ')') return;
+  s += nx;
+  sum += nx == '(' ? 1 : -1;
+  if (s.size() == n) {
+    if (sum == 0) cout << s << endl;
     return;
   }
-  func(cur + "(", sum + 1, len, res);
-  if (sum > 0) func(cur + ")", sum - 1, len, res);
+  dfs(n, s, sum, '(');
+  dfs(n, s, sum, ')');
 }
 
 int main() {
   int n;
-  cin >> n;
-  set<string> res;
-  func("", 0, n, res);
-  for (auto r : res) cout << r << endl;
+  cin >> n;  
+  dfs(n, "", 0, '(');
   return 0;
 }

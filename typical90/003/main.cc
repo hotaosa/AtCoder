@@ -8,33 +8,25 @@ template<class T> inline bool chmax(T &a, T b) {
   return false;
 }
 
-int tree_diameter(const vector<vector<int> > &graph) {
+pair<int, int> bfs(const vector<vector<int> > &graph, int s) {
+  pair<int, int> ret = {0, s};
   int n = graph.size();
-  pair<int, int> far_v = {0, 0};
-
-  auto bfs = [&](int s) -> std::vector<int> {
-    std::vector<int> dist(n, -1);
-    dist[s] = 0;
-    queue<int> que;
-    que.push(s);
-    while (!que.empty()) {
-      int v = que.front();
-      que.pop();
-      for (int nv : graph[v]) {
-        if (dist[nv] == -1) {
-          dist[nv] = dist[v] + 1;
-          que.push(nv);
-          chmax(far_v, {dist[nv], nv});          
-        }
+  vector<int> dist(n, -1);
+  dist[s] = 0;
+  queue<int> que;
+  que.push(s);
+  while (!que.empty()) {
+    int v = que.front();
+    que.pop();
+    for (int nv : graph[v]) {
+      if (dist[nv] == -1) {
+        dist[nv] = dist[v] + 1;
+        que.push(nv);
+        chmax(ret, {dist[nv], nv});
       }
     }
-    return dist;    
-  };
-
-  std::vector<int> d = bfs(0);
-  d.clear();
-  d = bfs(far_v.second);
-  return far_v.first;  
+  }
+  return ret;
 }
 
 int main() {
@@ -47,6 +39,9 @@ int main() {
     graph[--u].push_back(--v);
     graph[v].push_back(u);
   }
-  cout << tree_diameter(graph) + 1 << endl;
+
+  auto v1 = bfs(graph, 0);
+  auto v2 = bfs(graph, v1.second);
+  cout << ++v2.first << endl;
   return 0;
 }
