@@ -1,36 +1,39 @@
 #include <bits/stdc++.h>
 #include <atcoder/all>
 
+using namespace std;
+
 int main() {
-    std::string s;
-    int k;
-    std::cin >> s >> k;
-    int n = s.length();
+  string s;
+  int k;
+  cin >> s >> k;
+  int n = s.size();
 
-    std::vector<int> num;
-    for (char c : s) num.push_back(c - '0');
+  vector<vector<vector<long long> > > dp(n + 1, vector<vector<long long> >(2, vector<long long>(k + 1, 0)));
+  dp[0][0][0] = 1;
 
-    std::vector<std::vector<std::vector<int> > > dp(n + 1, std::vector<std::vector<int> > (k + 1, std::vector<int>(2, 0)));
-    ++dp[0][0][0];
-
-    for (int i = 0; i < n; ++i) {
-        int nx = num[i];
-        for (int j = 0; j <= k; ++j) {
-            if (nx > 0) dp[i + 1][j][1] += dp[i][j][1] + dp[i][j][0];
-            else {
-                dp[i + 1][j][1] += dp[i][j][1];
-                dp[i + 1][j][0] += dp[i][j][0];
-            }
+  for (int i = 0; i < n; ++i) {
+    for (int j = 0; j <= k; ++j) {
+      if (s[i] == '0') {
+        dp[i + 1][0][j] += dp[i][0][j];
+        dp[i + 1][1][j] += dp[i][1][j];
+      } else {
+        dp[i + 1][1][j] += dp[i][0][j] + dp[i][1][j];
+      }
+      if (j == k) continue;
+      for (int k = 1; k < 10; ++k) {
+        if (k < (s[i] - '0')) {
+          dp[i + 1][1][j + 1] += dp[i][1][j] + dp[i][0][j];
+        } else if (k == (s[i] - '0')) {
+          dp[i + 1][1][j + 1] += dp[i][1][j];
+          dp[i + 1][0][j + 1] += dp[i][0][j];
+        } else {
+          dp[i + 1][1][j + 1] += dp[i][1][j];
         }
-        for (int j = 1; j <= 9; ++j) {
-            for (int l = 0; l < k; ++l) {
-                dp[i + 1][l + 1][1] += dp[i][l][1];
-                if (j < nx) dp[i + 1][l + 1][1] += dp[i][l][0];
-                else if (j == nx) dp[i + 1][l + 1][0] += dp[i][l][0];
-            }
-        }
+      }
     }
+  }
 
-    std::cout << dp[n][k][0] + dp[n][k][1] << std::endl;    
-    return 0;
+  cout << dp[n][1][k] + dp[n][0][k] << endl;  
+  return 0;
 }
