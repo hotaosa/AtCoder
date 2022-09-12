@@ -1,20 +1,23 @@
-#include <iostream>
+#include <bits/stdc++.h>
+#include <atcoder/all>
+
+using namespace std;
 
 int main() {
   int n;
-  std::cin >> n;
-
-  int a_ma = 0, b_mi = 1 << 30;
+  cin >> n;
+  int a_mx = 0, b_mn = 1000;
   for (int i = 0; i < n; ++i) {
     int a;
-    std::cin >> a;
-    a_ma = std::max(a_ma, a);
+    cin >> a;
+    a_mx = max(a_mx, a);
   }
   for (int i = 0; i < n; ++i) {
     int b;
-    std::cin >> b;
-    b_mi = std::min(b_mi, b);
+    cin >> b;
+    b_mn = min(b_mn, b);
   }
-  std::cout << std::max(0, b_mi - a_ma + 1) << std::endl;
-  return 0;  
+
+  cout << max(0, b_mn - a_mx + 1) << endl;  
+  return 0;
 }

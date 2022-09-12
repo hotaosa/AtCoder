@@ -8,50 +8,50 @@ int main() {
   cin >> n >> m;
   vector<vector<int> > graph(n);
   for (int i = 0; i < m; ++i) {
-    int a, b;
-    cin >> a >> b;
-    graph[--a].push_back(--b);
-    graph[b].push_back(a);
+    int u, v;
+    cin >> u >> v;
+    graph[--u].push_back(--v);
+    graph[v].push_back(u);
   }
 
-  vector<bool> used(n, false);
-  vector<vector<int> > order;
+  vector<vector<int> > nodes;
+  vector<bool> seen(n, false);  
 
-  auto dfs1 = [&](auto dfs1, int v, vector<int> &cur) -> void {
-    cur.push_back(v);
-    used[v] = true;
-    for (int nv : graph[v]) {
-      if (!used[nv]) dfs1(dfs1, nv, cur);
-    }
+  auto dfs1 = [&](auto dfs1, int v) -> void {
+    seen[v] = true;
+    nodes[nodes.size() - 1].push_back(v);
+    for (int nv : graph[v]) if (!seen[nv]) dfs1(dfs1, nv);
   };
 
-  for (int i = 0; i < n; ++i) {    
-    if (!used[i]) {
-      vector<int> cur;
-      dfs1(dfs1, i, cur);
-      order.push_back(cur);
+  for (int i = 0; i < n; ++i) {
+    if (!seen[i]) {
+      nodes.push_back(vector<int>(0));
+      dfs1(dfs1, i);
     }
   }
-  
-  vector<int> c(n, -1);
+
+  vector<int> col(n, -1);
+  auto dfs2 = [&](auto dfs2, vector<int> &vec, int i, int &cur) -> void {
+    if (i == vec.size()) { ++cur; return; }
+
+    int v = vec[i];
+    set<int> se;
+    for (int nv : graph[v]) se.insert(col[nv]);
+    for (int c = 0; c < 3; ++c) {
+      if (!se.count(c)) {
+        col[v] = c;
+        dfs2(dfs2, vec, i + 1, cur);
+      }
+    }
+    col[v] = -1;
+  };
+
   long long res = 1;
-  int cnt = 0;
-
-  auto dfs2 = [&](auto dfs2, vector<int> &o, long long &add, int col, int p) -> void {
-    ++cnt;
-    int v = o[p];
-    for (int nv : graph[v]) if (c[nv] == col) return;
-    c[v] = col;    
-    if (p == (int)o.size() - 1) ++add;
-    else for (int i = 0; i < 3; ++i) dfs2(dfs2, o, add, i, p + 1);
-    c[v] = -1;    
-  };  
-
-  for (auto o : order) {
-    long long add = 0;
-    dfs2(dfs2, o, add, 0, 0);    
-    res *= add * 3;    
+  for (auto vec : nodes) {
+    int cur = 0;
+    dfs2(dfs2, vec, 0, cur);
+    res *= cur;
   }
-  cout << res << endl;
+  cout << res << endl;  
   return 0;
 }

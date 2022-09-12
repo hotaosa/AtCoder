@@ -12,39 +12,30 @@ int main() {
   int n, m;
   cin >> n >> m;
 
-  vector<vector<int> > c(n + 1, vector<int>(n + 1, n));
+  vector<vector<int> > cond(n + 1, vector<int>(n, n));
   for (int i = 0; i < m; ++i) {
     int x, y, z;
     cin >> x >> y >> z;
-    chmin(c[x][y], z);
+    chmin(cond[x][y], z);
   }
 
-  for (int i = n - 1; i >= 0; --i) {
-    for (int j = 1; j <= n; ++j) {
-      chmin(c[i][j], c[i + 1][j]);
-    }
+  vector<long long> dp(1 << n, 0);
+  dp[0] = 1;
+
+  vector<int> bits;
+  for (int i = 1; i < (1 << n); ++i) bits.push_back(i);
+  sort(bits.begin(), bits.end(), [](int i, int j) {
+    return __builtin_popcount(i) < __builtin_popcount(j);
+  });
+
+  for (auto bit : bits) {
+    int pc = __builtin_popcount(bit);
+    bool ok = true;
+    for (int i = 1; i < n; ++i) ok &= __builtin_popcount(bit & ((1 << i) - 1)) <= cond[pc][i];
+    if (!ok) continue;
+    for (int i = 0; i < n; ++i) if (bit & (1 << i)) dp[bit] += dp[bit - (1 << i)];    
   }
 
-  vector<vector<long long> > dp(n + 1, vector<long long>(1 << n, 0));
-  dp[0][0] = 1;
-
-  for (int i = 0; i < n; ++i) {
-    for (int j = 0; j < (1 << n); ++j) {
-      vector<int> cnt(n + 1, 0);
-      for (int k = 1; k <= n; ++k) {
-        if (j & (1 << (k - 1))) ++cnt[k];
-        cnt[k] += cnt[k - 1];
-      }
-      for (int k = 1; k <= n; ++k) {
-        if (j & (1 << (k - 1))) continue;
-        int nx = j | (1 << (k - 1));
-        bool ok = true;
-        for (int l = k; l <= n; ++l) ok &= cnt[l] < c[i + 1][l];
-        if (ok) dp[i + 1][nx] += dp[i][j];
-      }
-    }
-  }
-
-  cout << dp[n][(1 << n) - 1] << endl;
+  cout << dp.back() << endl;  
   return 0;
 }
