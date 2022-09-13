@@ -1,8 +1,12 @@
-#include <iostream>
+#include <bits/stdc++.h>
+#include <atcoder/all>
+
+using namespace std;
 
 int main() {
   double a, b;
-  std::cin >> a >> b;
-  printf("%.10f\n", a / 100.0 * b);
+  cin >> a >> b;
+  double res = a / 100. * b;
+  printf("%.10f\n", res);  
   return 0;
 }

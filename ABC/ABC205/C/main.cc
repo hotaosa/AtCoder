@@ -1,17 +1,19 @@
-#include <iostream>
+#include <bits/stdc++.h>
+#include <atcoder/all>
+
+using namespace std;
 
 int main() {
-  long long a, b;
-  int c;
-  std::cin >> a >> b >> c;
-  if (!(c & 1)) {
-    a = a * a;
-    b = b * b;
+  int a, b, c;
+  cin >> a >> b >> c;
+  if (a == b) {
+    cout << '=' << endl;
+  } else if (c & 1) {
+    cout << (a > b ? '>' : '<') << endl;
+  } else if (abs(a) == abs(b)) {
+    cout << '=' << endl;
+  } else {
+    cout << (abs(a) > abs(b) ? '>' : '<') << endl;
   }
-
-  if (a == b) std::cout << "=" << std::endl;
-  else if (a > b) std::cout << ">" << std::endl;
-  else std::cout << "<" << std::endl;
-
-  return 0;  
+  return 0;
 }

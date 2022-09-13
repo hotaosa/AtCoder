@@ -1,17 +1,18 @@
-#include <iostream>
-#include <vector>
-#include <algorithm>
+#include <bits/stdc++.h>
+#include <atcoder/all>
+
+using namespace std;
 
 int main() {
   int n;
-  std::cin >> n;
-  std::vector<int> a(n);
-  for (int i = 0; i < n; ++i) std::cin >> a[i];
-  std::sort(a.begin(), a.end());
+  cin >> n;
+  vector<int> a(n);
+  for (auto &p : a) cin >> p;
+  sort(a.begin(), a.end());
 
-  bool possible = true;
-  for (int i = 0; i < n; ++i) if (a[i] != i + 1) possible = false;
-
-  std::cout << (possible ? "Yes" : "No") << std::endl;
+  for (int i = 0; i < n; ++i) {
+    if (a[i] != i + 1) { cout << "No" << endl; return 0; }
+  }
+  cout << "Yes" << endl;  
   return 0;
 }
