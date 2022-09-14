@@ -6,7 +6,7 @@ using namespace std;
 using vec = vector<long long>;
 using mat = vector<vec>;
 
-mat mat_mul(const mat &a, const mat &b) {  
+mat mat_mul(const mat &a, const mat &b) {
   mat ret(a.size(), vec(b[0].size()));
   for (int i = 0; i < (int)a.size(); ++i) {
     for (int k = 0; k < (int)b.size(); ++k) {
@@ -18,34 +18,51 @@ mat mat_mul(const mat &a, const mat &b) {
   return ret;
 }
 
-int main() {  
+int main() {
   int n;
   cin >> n;
-  vector<mat> point(n, mat(3, vec(1, 1)));
-  for (int i = 0; i < n; ++i) cin >> point[i][0][0] >> point[i][1][0];
+  vector<mat> points(n, mat(3, vec(1, 1)));
+  for (int i = 0; i < n; ++i) cin >> points[i][0][0] >> points[i][1][0];
+
   int m;
   cin >> m;
-  vector<mat> vm(m + 1);
-  vm[0] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
-  for (int i = 0; i < m; ++i) {
-    int op;
-    cin >> op;
-    if (op == 1) vm[i + 1] = mat_mul({{0, 1, 0}, {-1, 0, 0}, {0, 0, 1}}, vm[i]);
-    else if (op == 2) vm[i + 1] = mat_mul({{0, -1, 0}, {1, 0, 0}, {0, 0, 1}}, vm[i]);
-    else {
+  vector<mat> op(m + 1, mat(3, vec(3, 0)));
+  for (int i = 0; i < 3; ++i) op[0][i][i] = 1;
+  
+  for (int i = 1; i <= m; ++i) {
+    int t;
+    cin >> t;
+    if (t == 1) {
+      op[i] = {{0, 1, 0},
+               {-1, 0, 0},
+               {0, 0, 1}};
+    } else if (t == 2) {
+      op[i] = {{0, -1, 0},
+               {1, 0, 0},
+               {0, 0, 1}};
+    } else if (t == 3) {
       int p;
       cin >> p;
-      if (op == 3) vm[i + 1] = mat_mul({{-1, 0, 2 * p}, {0, 1, 0}, {0, 0, 1}}, vm[i]);
-      else vm[i + 1] = mat_mul({{1, 0, 0}, {0, -1, 2 * p}, {0, 0, 1}}, vm[i]);
+      op[i] = {{-1, 0, 2 * p},
+               {0, 1, 0},
+               {0, 0, 1}};
+    } else {
+      int p;
+      cin >> p;
+      op[i] = {{1, 0, 0},
+               {0, -1, 2 * p},
+               {0, 0, 1}};
     }
-  }
+    op[i] = mat_mul(op[i], op[i - 1]);
+  }  
+
   int q;
   cin >> q;
-  while(q--) {
+  while (q--) {
     int a, b;
     cin >> a >> b;
-    mat res = mat_mul(vm[a], point[--b]);
+    auto res = mat_mul(op[a], points[--b]);
     cout << res[0][0] << " " << res[1][0] << endl;
-  }  
+  }
   return 0;
 }
