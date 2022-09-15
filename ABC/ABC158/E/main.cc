@@ -2,34 +2,32 @@
 #include <atcoder/all>
 
 using namespace std;
+using mint = atcoder::modint;
 
 int main() {
   int n, p;
   string s;
   cin >> n >> p >> s;
 
-  if (p == 2 || p == 5) {
+  if (__gcd(10, p) != 1) {
     long long res = 0;
     for (int i = 0; i < n; ++i) if ((s[i] - '0') % p == 0) res += i + 1;
     cout << res << endl;
     return 0;
   }
 
-  vector<long long> pow10_mod(n + 1);
-  pow10_mod[0] = 1;
-  for (int i = 0; i < n; ++i) pow10_mod[i + 1] = pow10_mod[i] * 10 % p;    
+  mint::set_mod(p);
+  vector<int> cnt(p, 0);
+  ++cnt[0];  
 
-  vector<long long> cnt(p, 0);
-  ++cnt[0];
   long long res = 0;
-
-  int cur = 0;
+  mint cur = 0;
   for (int i = n - 1; i >= 0; --i) {
-    cur = (cur + (s[i] - '0') * pow10_mod[n - 1 - i]) % p;
-    res += cnt[cur];
-    ++cnt[cur];    
+    cur += (s[i] - '0') * mint(10).pow(n - 1 - i);
+    res += cnt[cur.val()];
+    ++cnt[cur.val()];    
   }
 
-  cout << res << endl;  
-  return 0;
+  cout << res << endl;
+  return 0;  
 }
